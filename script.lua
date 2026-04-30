@@ -51,22 +51,6 @@ local function SendVisualChat(msg)
     end
 end
 
-local function PhraseBtn(text, pos)
-    local btn = Instance.new("TextButton", Main)
-    btn.Size = UDim2.new(0, 110, 0, 30)
-    btn.Position = pos
-    btn.Text = text
-    btn.BackgroundColor3 = Color3.fromRGB(60, 30, 150)
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", btn)
-    btn.MouseButton1Click:Connect(function() SendVisualChat(text) end)
-end
-
-PhraseBtn("Obrigado", UDim2.new(0, 10, 0, 85))
-PhraseBtn("Vlw MN", UDim2.new(0, 130, 0, 85))
-PhraseBtn("Tmj", UDim2.new(0, 10, 0, 125))
-PhraseBtn("Vouch", UDim2.new(0, 130, 0, 125))
-
 local function CmdBtn(name, pos, callback)
     local btn = Instance.new("TextButton", Main)
     btn.Size = UDim2.new(0, 230, 0, 35)
@@ -78,49 +62,6 @@ local function CmdBtn(name, pos, callback)
     btn.MouseButton1Click:Connect(callback)
 end
 
--- Funções Originais
-CmdBtn("Ragdoll (Safe)", UDim2.new(0, 10, 0, 180), function()
-    local hum = player.Character:FindFirstChildOfClass("Humanoid")
-    if hum then
-        hum:ChangeState(Enum.HumanoidStateType.Physics)
-        task.wait(2)
-        hum:ChangeState(Enum.HumanoidStateType.GettingUp)
-    end
-end)
-
-CmdBtn("Rocket (Anti-Death)", UDim2.new(0, 10, 0, 225), function()
-    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        local bv = Instance.new("BodyVelocity")
-        bv.MaxForce = Vector3.new(0, 999999, 0)
-        bv.Velocity = Vector3.new(0, 60, 0)
-        bv.Parent = hrp
-        local fire = Instance.new("Fire", hrp)
-        fire.Size = 10
-        task.wait(1.5)
-        bv:Destroy()
-        fire:Destroy()
-    end
-end)
-
-CmdBtn("Balloon (Fixed Float)", UDim2.new(0, 10, 0, 270), function()
-    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-    local head = player.Character:FindFirstChild("Head")
-    if hrp and head then
-        local bv = Instance.new("BodyVelocity")
-        bv.MaxForce = Vector3.new(0, 25000, 0)
-        bv.Velocity = Vector3.new(0, 15, 0)
-        bv.Parent = hrp
-        local mesh = head:FindFirstChildOfClass("SpecialMesh") or Instance.new("SpecialMesh", head)
-        local oldScale = mesh.Scale
-        mesh.Scale = Vector3.new(3, 3, 3)
-        task.wait(5)
-        bv:Destroy()
-        mesh.Scale = oldScale
-    end
-end)
-
--- NOVO: Funçao de Gift (Baseada na image_1d3b7c.png)
 local function CreateGiftInterface()
     local targets = GetTarget()
     local target = targets[1]
@@ -143,7 +84,6 @@ local function CreateGiftInterface()
     GTitle.Size = UDim2.new(1, 0, 0, 50)
     GTitle.TextColor3 = Color3.new(1, 1, 1)
     GTitle.Font = Enum.Font.GothamBold
-    GTitle.TextSize = 20
     GTitle.BackgroundTransparency = 1
 
     local Avatar = Instance.new("ImageLabel", GiftMain)
@@ -151,9 +91,6 @@ local function CreateGiftInterface()
     Avatar.Position = UDim2.new(0.5, -45, 0, 60)
     Avatar.Image = "rbxthumb://type=AvatarHeadShot&id="..target.UserId.."&w=150&h=150"
     Instance.new("UICorner", Avatar).CornerRadius = UDim.new(1, 0)
-    local stroke = Instance.new("UIStroke", Avatar)
-    stroke.Color = Color3.new(1, 1, 1)
-    stroke.Thickness = 2
 
     local NameLabel = Instance.new("TextLabel", GiftMain)
     NameLabel.Text = target.DisplayName
@@ -161,7 +98,6 @@ local function CreateGiftInterface()
     NameLabel.Position = UDim2.new(0.5, -160, 0, 170)
     NameLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     NameLabel.TextColor3 = Color3.new(1, 1, 1)
-    NameLabel.Font = Enum.Font.Gotham
     Instance.new("UICorner", NameLabel)
 
     local function Item(name, img, pos)
@@ -194,35 +130,33 @@ local function CreateGiftInterface()
     GiftBtn.Position = UDim2.new(0.5, -165, 0, 340)
     GiftBtn.BackgroundColor3 = Color3.new(1, 1, 1)
     GiftBtn.TextColor3 = Color3.new(0, 0, 0)
-    GiftBtn.Font = Enum.Font.GothamBold
     Instance.new("UICorner", GiftBtn)
 
     GiftBtn.MouseButton1Click:Connect(function()
         GiftBtn.Text = "SENDING..."
         task.wait(1)
         GiftOverlay:Destroy()
-        SendVisualChat("Te enviei o Gamepass! Aproveite.")
+        SendVisualChat("Olhe seu inventário, te enviei o Gamepass!")
     end)
 end
 
-CmdBtn("Simular Gift Gamepass", UDim2.new(0, 10, 0, 315), CreateGiftInterface)
+CmdBtn("Simular Gift (Novo)", UDim2.new(0, 10, 0, 180), CreateGiftInterface)
 
-CmdBtn("Jail Target (5 Seg)", UDim2.new(0, 10, 0, 360), function()
-    local targets = GetTarget()
-    for _, t in pairs(targets) do
-        if t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
-            local hrp = t.Character.HumanoidRootPart
-            local oldCF = hrp.CFrame
-            local start = tick()
-            while tick() - start < 5 do
-                hrp.CFrame = oldCF
-                task.wait(0.1)
-            end
-        end
-    end
+CmdBtn("Ragdoll (Safe)", UDim2.new(0, 10, 0, 225), function()
+    local hum = player.Character:FindFirstChildOfClass("Humanoid")
+    if hum then hum:ChangeState(Enum.HumanoidStateType.Physics) task.wait(2) hum:ChangeState(Enum.HumanoidStateType.GettingUp) end
 end)
 
-CmdBtn("Simular Compra Admin", UDim2.new(0, 10, 0, 405), CreateFakePurchase)
+CmdBtn("Rocket (Anti-Death)", UDim2.new(0, 10, 0, 270), function()
+    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        local bv = Instance.new("BodyVelocity", hrp)
+        bv.Velocity = Vector3.new(0, 60, 0)
+        local fire = Instance.new("Fire", hrp)
+        task.wait(1.5)
+        bv:Destroy() fire:Destroy()
+    end
+end)
 
 local RobuxLabel = Instance.new("TextLabel", Main)
 RobuxLabel.Text = "Robux: " .. VALOR_ROBUX
@@ -230,10 +164,7 @@ RobuxLabel.Position = UDim2.new(0, 10, 0, 550)
 RobuxLabel.Size = UDim2.new(1, -20, 0, 30)
 RobuxLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
 RobuxLabel.BackgroundTransparency = 1
-RobuxLabel.Font = Enum.Font.GothamBold
 
 game:GetService("UserInputService").InputBegan:Connect(function(input, gpe)
-    if not gpe and input.KeyCode == TECLA_TOGGLE then
-        Main.Visible = not Main.Visible
-    end
+    if not gpe and input.KeyCode == TECLA_TOGGLE then Main.Visible = not Main.Visible end
 end)
