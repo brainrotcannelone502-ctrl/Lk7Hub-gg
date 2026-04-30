@@ -51,17 +51,6 @@ local function SendVisualChat(msg)
     end
 end
 
-local function CmdBtn(name, pos, callback)
-    local btn = Instance.new("TextButton", Main)
-    btn.Size = UDim2.new(0, 230, 0, 35)
-    btn.Position = pos
-    btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", btn)
-    btn.MouseButton1Click:Connect(callback)
-end
-
 local function CreateGiftInterface()
     local targets = GetTarget()
     local target = targets[1]
@@ -140,21 +129,56 @@ local function CreateGiftInterface()
     end)
 end
 
+local function PhraseBtn(text, pos)
+    local btn = Instance.new("TextButton", Main)
+    btn.Size = UDim2.new(0, 110, 0, 30)
+    btn.Position = pos
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(60, 30, 150)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(function() SendVisualChat(text) end)
+end
+
+PhraseBtn("Obrigado", UDim2.new(0, 10, 0, 85))
+PhraseBtn("Vlw MN", UDim2.new(0, 130, 0, 85))
+PhraseBtn("Tmj", UDim2.new(0, 10, 0, 125))
+PhraseBtn("Vouch", UDim2.new(0, 130, 0, 125))
+
+local function CmdBtn(name, pos, callback)
+    local btn = Instance.new("TextButton", Main)
+    btn.Size = UDim2.new(0, 230, 0, 35)
+    btn.Position = pos
+    btn.Text = name
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(callback)
+end
+
 CmdBtn("Simular Gift (Novo)", UDim2.new(0, 10, 0, 180), CreateGiftInterface)
 
 CmdBtn("Ragdoll (Safe)", UDim2.new(0, 10, 0, 225), function()
     local hum = player.Character:FindFirstChildOfClass("Humanoid")
-    if hum then hum:ChangeState(Enum.HumanoidStateType.Physics) task.wait(2) hum:ChangeState(Enum.HumanoidStateType.GettingUp) end
+    if hum then
+        hum:ChangeState(Enum.HumanoidStateType.Physics)
+        task.wait(2)
+        hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+    end
 end)
 
 CmdBtn("Rocket (Anti-Death)", UDim2.new(0, 10, 0, 270), function()
     local hrp = player.Character:FindFirstChild("HumanoidRootPart")
     if hrp then
-        local bv = Instance.new("BodyVelocity", hrp)
+        local bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(0, 999999, 0)
         bv.Velocity = Vector3.new(0, 60, 0)
+        bv.Parent = hrp
         local fire = Instance.new("Fire", hrp)
+        fire.Size = 10
         task.wait(1.5)
-        bv:Destroy() fire:Destroy()
+        bv:Destroy()
+        fire:Destroy()
     end
 end)
 
@@ -164,7 +188,10 @@ RobuxLabel.Position = UDim2.new(0, 10, 0, 550)
 RobuxLabel.Size = UDim2.new(1, -20, 0, 30)
 RobuxLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
 RobuxLabel.BackgroundTransparency = 1
+RobuxLabel.Font = Enum.Font.GothamBold
 
 game:GetService("UserInputService").InputBegan:Connect(function(input, gpe)
-    if not gpe and input.KeyCode == TECLA_TOGGLE then Main.Visible = not Main.Visible end
+    if not gpe and input.KeyCode == TECLA_TOGGLE then
+        Main.Visible = not Main.Visible
+    end
 end)
