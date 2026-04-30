@@ -51,6 +51,28 @@ local function SendVisualChat(msg)
     end
 end
 
+local function PhraseBtn(text, pos)
+    local btn = Instance.new("TextButton", Main)
+    btn.Size = UDim2.new(0, 110, 0, 30)
+    btn.Position = pos
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(60, 30, 150)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(function() SendVisualChat(text) end)
+end
+
+local function CmdBtn(name, pos, callback)
+    local btn = Instance.new("TextButton", Main)
+    btn.Size = UDim2.new(0, 230, 0, 35)
+    btn.Position = pos
+    btn.Text = name
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(callback)
+end
+
 local function CreateGiftInterface()
     local targets = GetTarget()
     local target = targets[1]
@@ -129,58 +151,102 @@ local function CreateGiftInterface()
     end)
 end
 
-local function PhraseBtn(text, pos)
-    local btn = Instance.new("TextButton", Main)
-    btn.Size = UDim2.new(0, 110, 0, 30)
-    btn.Position = pos
-    btn.Text = text
-    btn.BackgroundColor3 = Color3.fromRGB(60, 30, 150)
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", btn)
-    btn.MouseButton1Click:Connect(function() SendVisualChat(text) end)
+local function CreateFakePurchase()
+    local Overlay = Instance.new("Frame", sg)
+    Overlay.Size = UDim2.new(1, 0, 1, 0)
+    Overlay.BackgroundColor3 = Color3.new(0, 0, 0)
+    Overlay.BackgroundTransparency = 0.5
+    Overlay.ZIndex = 10
+    local Prompt = Instance.new("Frame", Overlay)
+    Prompt.Size = UDim2.new(0, 400, 0, 250)
+    Prompt.Position = UDim2.new(0.5, -200, 0.5, -125)
+    Prompt.BackgroundColor3 = Color3.fromRGB(35, 40, 55)
+    Instance.new("UICorner", Prompt)
+    local Info = Instance.new("TextLabel", Prompt)
+    Info.Text = "Comandos de Administrador\n5.599 Robux"
+    Info.Size = UDim2.new(1, 0, 0, 100)
+    Info.Position = UDim2.new(0, 0, 0, 40)
+    Info.BackgroundTransparency = 1
+    Info.TextColor3 = Color3.new(1,1,1)
+    Info.TextSize = 20
+    local BuyBtn = Instance.new("TextButton", Prompt)
+    BuyBtn.Text = "Comprar"
+    BuyBtn.Size = UDim2.new(0, 360, 0, 50)
+    BuyBtn.Position = UDim2.new(0, 20, 0, 170)
+    BuyBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+    BuyBtn.TextColor3 = Color3.new(1,1,1)
+    Instance.new("UICorner", BuyBtn)
+    BuyBtn.MouseButton1Click:Connect(function()
+        BuyBtn.Text = "Processando..."
+        task.wait(1)
+        Overlay:Destroy()
+        game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {Text = "Compra realizada com sucesso!", Color = Color3.new(0,1,0)})
+    end)
 end
 
+-- Botões de Frase
 PhraseBtn("Obrigado", UDim2.new(0, 10, 0, 85))
 PhraseBtn("Vlw MN", UDim2.new(0, 130, 0, 85))
 PhraseBtn("Tmj", UDim2.new(0, 10, 0, 125))
 PhraseBtn("Vouch", UDim2.new(0, 130, 0, 125))
 
-local function CmdBtn(name, pos, callback)
-    local btn = Instance.new("TextButton", Main)
-    btn.Size = UDim2.new(0, 230, 0, 35)
-    btn.Position = pos
-    btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", btn)
-    btn.MouseButton1Click:Connect(callback)
-end
-
-CmdBtn("Simular Gift (Novo)", UDim2.new(0, 10, 0, 180), CreateGiftInterface)
-
-CmdBtn("Ragdoll (Safe)", UDim2.new(0, 10, 0, 225), function()
+-- Todos os Comandos Restaurados
+CmdBtn("Ragdoll (Safe)", UDim2.new(0, 10, 0, 180), function()
     local hum = player.Character:FindFirstChildOfClass("Humanoid")
-    if hum then
-        hum:ChangeState(Enum.HumanoidStateType.Physics)
-        task.wait(2)
-        hum:ChangeState(Enum.HumanoidStateType.GettingUp)
-    end
+    if hum then hum:ChangeState(Enum.HumanoidStateType.Physics) task.wait(2) hum:ChangeState(Enum.HumanoidStateType.GettingUp) end
 end)
 
-CmdBtn("Rocket (Anti-Death)", UDim2.new(0, 10, 0, 270), function()
+CmdBtn("Rocket (Anti-Death)", UDim2.new(0, 10, 0, 225), function()
     local hrp = player.Character:FindFirstChild("HumanoidRootPart")
     if hrp then
-        local bv = Instance.new("BodyVelocity")
+        local bv = Instance.new("BodyVelocity", hrp)
         bv.MaxForce = Vector3.new(0, 999999, 0)
         bv.Velocity = Vector3.new(0, 60, 0)
-        bv.Parent = hrp
         local fire = Instance.new("Fire", hrp)
         fire.Size = 10
         task.wait(1.5)
-        bv:Destroy()
-        fire:Destroy()
+        bv:Destroy() fire:Destroy()
     end
 end)
+
+CmdBtn("Balloon (Fixed Float)", UDim2.new(0, 10, 0, 270), function()
+    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+    local head = player.Character:FindFirstChild("Head")
+    if hrp and head then
+        local bv = Instance.new("BodyVelocity", hrp)
+        bv.MaxForce = Vector3.new(0, 25000, 0)
+        bv.Velocity = Vector3.new(0, 15, 0)
+        local mesh = head:FindFirstChildOfClass("SpecialMesh") or Instance.new("SpecialMesh", head)
+        local oldScale = mesh.Scale
+        mesh.Scale = Vector3.new(3, 3, 3)
+        task.wait(5)
+        bv:Destroy() mesh.Scale = oldScale
+    end
+end)
+
+CmdBtn("Force Jump 3x (Safe)", UDim2.new(0, 10, 0, 315), function()
+    for _, p in pairs(GetTarget()) do
+        if p ~= player and p.Character and p.Character:FindFirstChild("Humanoid") then
+            task.spawn(function() for i = 1, 3 do p.Character.Humanoid.Jump = true task.wait(0.7) end end)
+        end
+    end
+end)
+
+CmdBtn("Jail Target (5 Seg)", UDim2.new(0, 10, 0, 360), function()
+    local targets = GetTarget()
+    for _, t in pairs(targets) do
+        if t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
+            local hrp = t.Character.HumanoidRootPart
+            local oldCF = hrp.CFrame
+            local start = tick()
+            while tick() - start < 5 do hrp.CFrame = oldCF task.wait(0.1) end
+        end
+    end
+end)
+
+CmdBtn("Simular Compra Admin", UDim2.new(0, 10, 0, 405), CreateFakePurchase)
+
+CmdBtn("Simular Gift Gamepass", UDim2.new(0, 10, 0, 450), CreateGiftInterface)
 
 local RobuxLabel = Instance.new("TextLabel", Main)
 RobuxLabel.Text = "Robux: " .. VALOR_ROBUX
@@ -191,7 +257,5 @@ RobuxLabel.BackgroundTransparency = 1
 RobuxLabel.Font = Enum.Font.GothamBold
 
 game:GetService("UserInputService").InputBegan:Connect(function(input, gpe)
-    if not gpe and input.KeyCode == TECLA_TOGGLE then
-        Main.Visible = not Main.Visible
-    end
+    if not gpe and input.KeyCode == TECLA_TOGGLE then Main.Visible = not Main.Visible end
 end)
