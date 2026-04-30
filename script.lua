@@ -7,8 +7,8 @@ local VALOR_ROBUX = 11284
 local TECLA_TOGGLE = Enum.KeyCode.P
 
 local Main = Instance.new("Frame", sg)
-Main.Size = UDim2.new(0, 250, 0, 600)
-Main.Position = UDim2.new(0.5, -125, 0.5, -300)
+Main.Size = UDim2.new(0, 250, 0, 620)
+Main.Position = UDim2.new(0.5, -125, 0.5, -310)
 Main.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 Main.Active = true
 Main.Draggable = true
@@ -51,26 +51,32 @@ local function SendVisualChat(msg)
     end
 end
 
-local function PhraseBtn(text, pos)
-    local btn = Instance.new("TextButton", Main)
-    btn.Size = UDim2.new(0, 110, 0, 30)
-    btn.Position = pos
-    btn.Text = text
-    btn.BackgroundColor3 = Color3.fromRGB(60, 30, 150)
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", btn)
-    btn.MouseButton1Click:Connect(function() SendVisualChat(text) end)
-end
+local function AtivarLojaInfinita()
+    VALOR_ROBUX = 100000
+    game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+        Text = "[LK7] Saldo Visual de 100K Ativado!",
+        Color = Color3.fromRGB(255, 255, 0),
+        Font = Enum.Font.GothamBold
+    })
 
-local function CmdBtn(name, pos, callback)
-    local btn = Instance.new("TextButton", Main)
-    btn.Size = UDim2.new(0, 230, 0, 35)
-    btn.Position = pos
-    btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", btn)
-    btn.MouseButton1Click:Connect(callback)
+    local function HookButtons(obj)
+        if obj:IsA("TextButton") or obj:IsA("ImageButton") then
+            if obj.Name:lower():find("buy") or obj.Name:lower():find("purchase") or obj.Name:lower():find("comprar") then
+                obj.MouseButton1Click:Connect(function()
+                    local oldText = obj.Text
+                    obj.Text = "COMPRADO!"
+                    task.wait(1)
+                    obj.Text = oldText
+                    game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+                        Text = "Compra realizada com sucesso (Visual)!",
+                        Color = Color3.new(0, 1, 0)
+                    })
+                end)
+            end
+        end
+        for _, child in pairs(obj:GetChildren()) do HookButtons(child) end
+    end
+    HookButtons(player.PlayerGui)
 end
 
 local function CreateGiftInterface()
@@ -129,7 +135,6 @@ local function CreateGiftInterface()
         t.Position = UDim2.new(0, 0, 0.7, 0)
         t.TextColor3 = Color3.new(1, 1, 1)
         t.BackgroundTransparency = 1
-        t.Font = Enum.Font.GothamBold
     end
 
     Item("Flying Carpet", "rbxassetid://13540134443", UDim2.new(0, 25, 0, 220))
@@ -151,46 +156,33 @@ local function CreateGiftInterface()
     end)
 end
 
-local function CreateFakePurchase()
-    local Overlay = Instance.new("Frame", sg)
-    Overlay.Size = UDim2.new(1, 0, 1, 0)
-    Overlay.BackgroundColor3 = Color3.new(0, 0, 0)
-    Overlay.BackgroundTransparency = 0.5
-    Overlay.ZIndex = 10
-    local Prompt = Instance.new("Frame", Overlay)
-    Prompt.Size = UDim2.new(0, 400, 0, 250)
-    Prompt.Position = UDim2.new(0.5, -200, 0.5, -125)
-    Prompt.BackgroundColor3 = Color3.fromRGB(35, 40, 55)
-    Instance.new("UICorner", Prompt)
-    local Info = Instance.new("TextLabel", Prompt)
-    Info.Text = "Comandos de Administrador\n5.599 Robux"
-    Info.Size = UDim2.new(1, 0, 0, 100)
-    Info.Position = UDim2.new(0, 0, 0, 40)
-    Info.BackgroundTransparency = 1
-    Info.TextColor3 = Color3.new(1,1,1)
-    Info.TextSize = 20
-    local BuyBtn = Instance.new("TextButton", Prompt)
-    BuyBtn.Text = "Comprar"
-    BuyBtn.Size = UDim2.new(0, 360, 0, 50)
-    BuyBtn.Position = UDim2.new(0, 20, 0, 170)
-    BuyBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-    BuyBtn.TextColor3 = Color3.new(1,1,1)
-    Instance.new("UICorner", BuyBtn)
-    BuyBtn.MouseButton1Click:Connect(function()
-        BuyBtn.Text = "Processando..."
-        task.wait(1)
-        Overlay:Destroy()
-        game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {Text = "Compra realizada com sucesso!", Color = Color3.new(0,1,0)})
-    end)
+local function PhraseBtn(text, pos)
+    local btn = Instance.new("TextButton", Main)
+    btn.Size = UDim2.new(0, 110, 0, 30)
+    btn.Position = pos
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(60, 30, 150)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(function() SendVisualChat(text) end)
 end
 
--- Botões de Frase
+local function CmdBtn(name, pos, callback)
+    local btn = Instance.new("TextButton", Main)
+    btn.Size = UDim2.new(0, 230, 0, 35)
+    btn.Position = pos
+    btn.Text = name
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(callback)
+end
+
 PhraseBtn("Obrigado", UDim2.new(0, 10, 0, 85))
 PhraseBtn("Vlw MN", UDim2.new(0, 130, 0, 85))
 PhraseBtn("Tmj", UDim2.new(0, 10, 0, 125))
 PhraseBtn("Vouch", UDim2.new(0, 130, 0, 125))
 
--- Todos os Comandos Restaurados
 CmdBtn("Ragdoll (Safe)", UDim2.new(0, 10, 0, 180), function()
     local hum = player.Character:FindFirstChildOfClass("Humanoid")
     if hum then hum:ChangeState(Enum.HumanoidStateType.Physics) task.wait(2) hum:ChangeState(Enum.HumanoidStateType.GettingUp) end
@@ -200,62 +192,54 @@ CmdBtn("Rocket (Anti-Death)", UDim2.new(0, 10, 0, 225), function()
     local hrp = player.Character:FindFirstChild("HumanoidRootPart")
     if hrp then
         local bv = Instance.new("BodyVelocity", hrp)
-        bv.MaxForce = Vector3.new(0, 999999, 0)
         bv.Velocity = Vector3.new(0, 60, 0)
-        local fire = Instance.new("Fire", hrp)
-        fire.Size = 10
+        local f = Instance.new("Fire", hrp)
         task.wait(1.5)
-        bv:Destroy() fire:Destroy()
+        bv:Destroy() f:Destroy()
     end
 end)
 
-CmdBtn("Balloon (Fixed Float)", UDim2.new(0, 10, 0, 270), function()
+CmdBtn("Jail Target (5 Seg)", UDim2.new(0, 10, 0, 270), function()
+    local t = GetTarget()[1]
+    if t and t.Character then
+        local hrp = t.Character:FindFirstChild("HumanoidRootPart")
+        local cf = hrp.CFrame
+        local s = tick()
+        while tick() - s < 5 do hrp.CFrame = cf task.wait(0.1) end
+    end
+end)
+
+CmdBtn("Balloon (Fixed Float)", UDim2.new(0, 10, 0, 315), function()
     local hrp = player.Character:FindFirstChild("HumanoidRootPart")
-    local head = player.Character:FindFirstChild("Head")
-    if hrp and head then
+    if hrp then
         local bv = Instance.new("BodyVelocity", hrp)
         bv.MaxForce = Vector3.new(0, 25000, 0)
         bv.Velocity = Vector3.new(0, 15, 0)
-        local mesh = head:FindFirstChildOfClass("SpecialMesh") or Instance.new("SpecialMesh", head)
-        local oldScale = mesh.Scale
-        mesh.Scale = Vector3.new(3, 3, 3)
         task.wait(5)
-        bv:Destroy() mesh.Scale = oldScale
+        bv:Destroy()
     end
 end)
 
-CmdBtn("Force Jump 3x (Safe)", UDim2.new(0, 10, 0, 315), function()
-    for _, p in pairs(GetTarget()) do
-        if p ~= player and p.Character and p.Character:FindFirstChild("Humanoid") then
-            task.spawn(function() for i = 1, 3 do p.Character.Humanoid.Jump = true task.wait(0.7) end end)
-        end
-    end
+CmdBtn("Simular Gift Gamepass", UDim2.new(0, 10, 0, 360), CreateGiftInterface)
+CmdBtn("LOJA INFINITA (100K)", UDim2.new(0, 10, 0, 405), AtivarLojaInfinita)
+
+CmdBtn("Simular Compra Admin", UDim2.new(0, 10, 0, 450), function()
+    game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {Text = "Compra realizada com sucesso!", Color = Color3.new(0,1,0)})
 end)
-
-CmdBtn("Jail Target (5 Seg)", UDim2.new(0, 10, 0, 360), function()
-    local targets = GetTarget()
-    for _, t in pairs(targets) do
-        if t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
-            local hrp = t.Character.HumanoidRootPart
-            local oldCF = hrp.CFrame
-            local start = tick()
-            while tick() - start < 5 do hrp.CFrame = oldCF task.wait(0.1) end
-        end
-    end
-end)
-
-CmdBtn("Simular Compra Admin", UDim2.new(0, 10, 0, 405), CreateFakePurchase)
-
-CmdBtn("Simular Gift Gamepass", UDim2.new(0, 10, 0, 450), CreateGiftInterface)
 
 local RobuxLabel = Instance.new("TextLabel", Main)
-RobuxLabel.Text = "Robux: " .. VALOR_ROBUX
-RobuxLabel.Position = UDim2.new(0, 10, 0, 550)
+RobuxLabel.Position = UDim2.new(0, 10, 0, 560)
 RobuxLabel.Size = UDim2.new(1, -20, 0, 30)
 RobuxLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
 RobuxLabel.BackgroundTransparency = 1
 RobuxLabel.Font = Enum.Font.GothamBold
 
-game:GetService("UserInputService").InputBegan:Connect(function(input, gpe)
-    if not gpe and input.KeyCode == TECLA_TOGGLE then Main.Visible = not Main.Visible end
+spawn(function()
+    while task.wait(0.1) do
+        RobuxLabel.Text = "Robux: " .. string.format('%,d', VALOR_ROBUX):gsub(",", ".")
+    end
+end)
+
+game:GetService("UserInputService").InputBegan:Connect(function(i, g)
+    if not g and i.KeyCode == TECLA_TOGGLE then Main.Visible = not Main.Visible end
 end)
